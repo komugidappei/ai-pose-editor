@@ -1,7 +1,7 @@
 // Google reCAPTCHA v2 の実装
 // ゲストユーザーの画像生成・アップロード時のスパム対策
 
-import { createContext, useContext } from 'react';
+import { createContext, useContext, useState, useEffect } from 'react';
 
 // reCAPTCHA設定
 export const RECAPTCHA_SITE_KEY = process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY || '';
@@ -305,5 +305,3 @@ export function useRecaptchaLoad(): {
   return { isLoaded, loadError };
 }
 
-// useState, useEffectのインポートが必要
-import { useState, useEffect } from 'react';
