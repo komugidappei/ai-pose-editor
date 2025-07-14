@@ -416,62 +416,11 @@ export async function getImageStorageStats(userId: string): Promise<{
 
 /**
  * React Hook: 画像制限の管理
+ * Note: This hook should be moved to a client component when needed
  */
-import { useState, useEffect } from 'react';
-
-export function useImageLimit(userId: string) {
-  const [stats, setStats] = useState<Awaited<ReturnType<typeof getImageStorageStats>> | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  const refreshStats = async () => {
-    try {
-      setIsLoading(true);
-      setError(null);
-      const newStats = await getImageStorageStats(userId);
-      setStats(newStats);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : '統計の取得に失敗しました');
-      console.error('Image limit stats error:', err);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    if (userId) {
-      refreshStats();
-    }
-  }, [userId]);
-
-  const prepareForSave = async () => {
-    if (!userId) return { canProceed: false, message: 'ユーザーIDが不明です' };
-    
-    const result = await prepareForImageSave(userId);
-    if (result.canProceed) {
-      // 統計を更新
-      await refreshStats();
-    }
-    return result;
-  };
-
-  const cleanup = async (keepCount?: number) => {
-    if (!userId) return { success: false, message: 'ユーザーIDが不明です', deletedCount: 0, errors: [] };
-    
-    const result = await cleanupOldImages(userId, keepCount);
-    if (result.success) {
-      // 統計を更新
-      await refreshStats();
-    }
-    return result;
-  };
-
-  return {
-    stats,
-    isLoading,
-    error,
-    refreshStats,
-    prepareForSave,
-    cleanup
-  };
-}
+export type ImageLimitHookType = {
+  stats: Awaited<ReturnType<typeof getImageStorageStats>> | null;
+  isLoading: boolean;
+  error: string | null;
+  refreshStats: () => Promise<void>;
+};

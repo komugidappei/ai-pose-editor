@@ -4,6 +4,9 @@
 import { NextRequest } from 'next/server';
 import { sanitizeAllTextInputs, validateUserInput } from './htmlEscape';
 
+// Re-export for API routes
+export { sanitizeAllTextInputs } from './htmlEscape';
+
 /**
  * リクエストボディのサニタイズ
  */

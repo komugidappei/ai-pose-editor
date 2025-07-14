@@ -1,7 +1,7 @@
 // Google reCAPTCHA v2 の実装
 // ゲストユーザーの画像生成・アップロード時のスパム対策
 
-import { createContext, useContext, useState, useEffect } from 'react';
+// Server-side utilities only - React hooks moved to client components
 
 // reCAPTCHA設定
 export const RECAPTCHA_SITE_KEY = process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY || '';
@@ -16,25 +16,11 @@ export interface RecaptchaVerificationResult {
   hostname?: string;
 }
 
-// reCAPTCHAコンテキストの型定義
+// reCAPTCHAコンテキストの型定義（クライアント側で使用）
 export interface RecaptchaContextType {
   isLoaded: boolean;
   executeRecaptcha: () => Promise<string | null>;
   resetRecaptcha: () => void;
-}
-
-// reCAPTCHAコンテキスト
-export const RecaptchaContext = createContext<RecaptchaContextType | null>(null);
-
-/**
- * reCAPTCHAコンテキストを使用するフック
- */
-export function useRecaptcha(): RecaptchaContextType {
-  const context = useContext(RecaptchaContext);
-  if (!context) {
-    throw new Error('useRecaptcha must be used within a RecaptchaProvider');
-  }
-  return context;
 }
 
 /**
@@ -268,40 +254,9 @@ export function validateRecaptchaConfig(): {
   };
 }
 
-/**
- * reCAPTCHA読み込み状態の管理用フック
- */
-export function useRecaptchaLoad(): {
+// Hook moved to client component - use this type for client-side implementation
+export type RecaptchaLoadHook = {
   isLoaded: boolean;
   loadError: string | null;
-} {
-  const [isLoaded, setIsLoaded] = useState(false);
-  const [loadError, setLoadError] = useState<string | null>(null);
-
-  useEffect(() => {
-    // reCAPTCHA設定の検証
-    const config = validateRecaptchaConfig();
-    if (!config.isValid) {
-      setLoadError(`reCAPTCHA設定エラー: ${config.errors.join(', ')}`);
-      return;
-    }
-
-    // グローバルなreCAPTCHA読み込み状態をチェック
-    if (typeof window !== 'undefined' && window.grecaptcha) {
-      setIsLoaded(true);
-    } else {
-      // reCAPTCHAスクリプトの読み込み完了を待機
-      const checkRecaptcha = () => {
-        if (window.grecaptcha) {
-          setIsLoaded(true);
-        } else {
-          setTimeout(checkRecaptcha, 100);
-        }
-      };
-      checkRecaptcha();
-    }
-  }, []);
-
-  return { isLoaded, loadError };
-}
+};
 
