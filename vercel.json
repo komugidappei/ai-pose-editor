@@ -1,16 +1,8 @@
 {
-  "functions": {
-    "src/app/api/**/route.ts": {
-      "maxDuration": 60
-    }
-  },
   "crons": [
     {
       "path": "/api/cron/daily-cleanup",
       "schedule": "0 2 * * *"
     }
-  ],
-  "env": {
-    "NODE_ENV": "production"
-  }
+  ]
 }
