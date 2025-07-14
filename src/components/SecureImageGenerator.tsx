@@ -101,7 +101,7 @@ export default function SecureImageGenerator({
 
       // 2. 日次生成制限チェック（1日10回）
       if (!dailyLimit.checkCanGenerate()) {
-        onError?.(日次制限に達しています。明日の午前2時にリセットされます。');
+        onError?.('日次制限に達しています。明日の午前2時にリセットされます。');
         return;
       }
 
